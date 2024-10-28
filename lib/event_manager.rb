@@ -88,6 +88,12 @@ def format_hours(hours)
   end
 end
 
+def format_days(days)
+  days.map do |day|
+    Date::DAYNAMES[day]
+  end
+end
+
 puts 'Event Manager Initialized!'
 
 template_letter = File.read('form_letter.erb')
@@ -113,11 +119,11 @@ if File.exist? 'event_attendees.csv'
 
     registration_dates << create_time_obj(row[:regdate])
 
-    # legislators = legislator_by_zipcode(zipcode)
+    legislators = legislator_by_zipcode(zipcode)
 
-    # form_letter = erb_template.result(binding)
+    form_letter = erb_template.result(binding)
 
-    # save_thank_you_letter(id, form_letter)
+    save_thank_you_letter(id, form_letter)
   end
 end
 
@@ -125,4 +131,6 @@ peak_hours = peak(registration_dates, :hour)
 peak_hours = format_hours(peak_hours)
 print_peak('Peak hour/s: ', peak_hours)
 
-# peak_days = peak(registration_dates, :wday)
+peak_days = peak(registration_dates, :wday)
+peak_days = format_days(peak_days)
+print_peak('Peak day/s: ', peak_days)
