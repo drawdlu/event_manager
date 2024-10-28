@@ -60,7 +60,11 @@ end
 
 def peak_hours(dates)
   tally = tally_hours(dates)
-  p tally
+  max_reg_in_hour = tally.max_by(&:last)[1]
+  tally.each do |hour, times|
+    tally.delete(hour) unless times == max_reg_in_hour
+  end
+  print_peak(tally)
 end
 
 def tally_hours(dates)
@@ -69,6 +73,20 @@ def tally_hours(dates)
     hours << date.hour
   end
   hours.tally
+end
+
+def print_peak(tally)
+  peak_num = tally.length
+  if peak_num > 1
+    print 'Peak hours are '
+  else
+    print 'Peak hour is '
+  end
+  tally.each_key do |hour|
+    formatted_hour = Time.strptime(hour.to_s, '%H').strftime('%l%P').strip
+    print "#{formatted_hour} "
+  end
+  puts ''
 end
 
 puts 'Event Manager Initialized!'
