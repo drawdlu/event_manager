@@ -58,11 +58,9 @@ end
 
 def peak(dates, to_tally)
   tally = tally(dates, to_tally)
-  max_reg_in_hour = tally.max_by(&:last)[1]
-  tally.each do |hour, times|
-    tally.delete(hour) unless times == max_reg_in_hour
-  end
-  tally.keys
+  max = tally.max_by(2) { |key, value| value }
+
+  max.map { |data| data[0] }
 end
 
 def tally(dates, to_tally)
@@ -129,8 +127,8 @@ end
 
 peak_hours = peak(registration_dates, :hour)
 peak_hours = format_hours(peak_hours)
-print_peak('Peak hour/s: ', peak_hours)
+print_peak('Peak hours: ', peak_hours)
 
 peak_days = peak(registration_dates, :wday)
 peak_days = format_days(peak_days)
-print_peak('Peak day/s: ', peak_days)
+print_peak('Peak days: ', peak_days)
