@@ -49,6 +49,16 @@ def clean_number(number)
   end
 end
 
+# creates date object assuming that the format of string is
+# 'month/day/year hour:minute'
+# assume that year only has 2 digits with no century
+def create_date_obj(date_string)
+  date_time = date_string.split(' ')
+  date = date_time[0].split('/')
+  time = date_time[1].split(':')
+  Time.new(date[2].rjust(4, '20'), date[0], date[1], time[0], time[1])
+end
+
 puts 'Event Manager Initialized!'
 
 template_letter = File.read('form_letter.erb')
@@ -70,11 +80,13 @@ if File.exist? 'event_attendees.csv'
 
     num = clean_number(phone)
 
-    legislators = legislator_by_zipcode(zipcode)
+    date_time = create_date_obj(row[:regdate])
 
-    form_letter = erb_template.result(binding)
+    # legislators = legislator_by_zipcode(zipcode)
+
+    # form_letter = erb_template.result(binding)
     
-    save_thank_you_letter(id, form_letter)
+    # save_thank_you_letter(id, form_letter)
 
   end
 end
