@@ -16,6 +16,12 @@
         Please consider reaching out to your following representatives:
     </p>
 
+    <% if num %>
+    <p> We will contact you at the number you provided: <%= num %> </p>
+    <% else %>
+    <p> You have submitted an invalid number. Please resubmit your phone number to receive mobile alerts </p>
+    <% end %>
+
     <table>
         <% if legislators.kind_of?(Array) %>
             <tr>

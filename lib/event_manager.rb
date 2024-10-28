@@ -1,6 +1,7 @@
 require 'csv'
 require 'google/apis/civicinfo_v2'
 require 'erb'
+require 'time'
 
 
 def clean_zipcode(zipcode)
@@ -32,6 +33,22 @@ def save_thank_you_letter(id, form_letter)
   end
 end
 
+def format_number(number)
+  number.insert(3, '-').insert(7, '-')
+end
+
+def clean_number(number)
+  number = number.scan(/\d/).join
+
+  if number.length == 10
+    format_number(number)
+  elsif number.length == 11 && number[0] == 1
+    format_number(number[1..10])
+  else
+    nil
+  end
+end
+
 puts 'Event Manager Initialized!'
 
 template_letter = File.read('form_letter.erb')
@@ -48,6 +65,10 @@ if File.exist? 'event_attendees.csv'
     name = row[:first_name]
 
     zipcode = clean_zipcode(row[:zipcode])
+
+    phone = row[:homephone]
+
+    num = clean_number(phone)
 
     legislators = legislator_by_zipcode(zipcode)
 
