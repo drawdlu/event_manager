@@ -2,6 +2,7 @@ require 'csv'
 require 'google/apis/civicinfo_v2'
 require 'erb'
 require 'time'
+require 'date'
 
 def clean_zipcode(zipcode)
   zipcode.to_s.rjust(5, '0')[0..4]
@@ -55,35 +56,36 @@ def create_time_obj(date_string)
   Time.strptime(date_string, '%m/%d/%y %H:%M')
 end
 
-def peak_hours(dates)
-  tally = tally_hours(dates)
+def peak(dates, to_tally)
+  tally = tally(dates, to_tally)
   max_reg_in_hour = tally.max_by(&:last)[1]
   tally.each do |hour, times|
     tally.delete(hour) unless times == max_reg_in_hour
   end
-  print_peak(tally)
+  tally.keys
 end
 
-def tally_hours(dates)
+def tally(dates, to_tally)
   hours = []
   dates.each do |date|
-    hours << date.hour
+    hours << date.send(to_tally)
   end
   hours.tally
 end
 
-def print_peak(tally)
-  peak_num = tally.length
-  if peak_num > 1
-    print 'Peak hours are '
-  else
-    print 'Peak hour is '
-  end
-  tally.each_key do |hour|
-    formatted_hour = Time.strptime(hour.to_s, '%H').strftime('%l%P').strip
-    print "#{formatted_hour} "
+def print_peak(to_print, tally)
+  print to_print
+
+  tally.each do |data|
+    print "#{data} "
   end
   puts ''
+end
+
+def format_hours(hours)
+  hours.map! do |hour|
+    Time.strptime(hour.to_s, '%H').strftime('%l%P').strip
+  end
 end
 
 puts 'Event Manager Initialized!'
@@ -119,4 +121,8 @@ if File.exist? 'event_attendees.csv'
   end
 end
 
-peak_hours(registration_dates)
+peak_hours = peak(registration_dates, :hour)
+peak_hours = format_hours(peak_hours)
+print_peak('Peak hour/s: ', peak_hours)
+
+# peak_days = peak(registration_dates, :wday)
