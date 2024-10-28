@@ -51,11 +51,8 @@ end
 # creates date object assuming that the format of string is
 # 'month/day/year hour:minute'
 # assume that year only has 2 digits with no century
-def create_date_obj(date_string)
-  date_time = date_string.split(' ')
-  date = date_time[0].split('/')
-  time = date_time[1].split(':')
-  Time.new(date[2].rjust(4, '20'), date[0], date[1], time[0], time[1])
+def create_time_obj(date_string)
+  Time.strptime(date_string, '%m/%d/%y %H:%M')
 end
 
 def peak_hours(dates)
@@ -112,7 +109,7 @@ if File.exist? 'event_attendees.csv'
 
     num = clean_number(phone)
 
-    registration_dates << create_date_obj(row[:regdate])
+    registration_dates << create_time_obj(row[:regdate])
 
     # legislators = legislator_by_zipcode(zipcode)
 
